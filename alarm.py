@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from kivy.lang import Builder
 from kivy.metrics import dp
 
@@ -46,5 +44,6 @@ class Alarm(MDApp):
         self.menu.dismiss()
         Snackbar(text=text_item).open()
 
+if __name__ == "__main__":
+	Alarm().run()
 
-Test().run()
