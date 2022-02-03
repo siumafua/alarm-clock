@@ -17,6 +17,10 @@ MDBoxLayout:
     MDLabel:
         text: "Content"
         halign: "center"
+
+	MDTextInput:
+	MDGridLayout:
+		
 '''
 
 
