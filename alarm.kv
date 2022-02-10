@@ -77,7 +77,6 @@
 
                     Black_12sp_Label:
                         text: 'Hour (24Hr)'
-                        color: (0, 0, 0)
 
                 GridLayout:
                     cols: 3
@@ -97,6 +96,7 @@
                         TextInput:
                             id: tihour
                             multiline: False
+                            font_size: '12sp'
  #                           size_hint_y: None
 #                            height: '30dp'
                             text: '00' 
@@ -112,9 +112,8 @@
                         cols: 1
                         size_hint_x: .10
 
-                        Label:
+                        Black_12sp_Label:
                             text: ':'
-                            color: (0, 0, 0)
 #                            size_hint_y: None
 #                            height: '30dp'
                             bold: True
@@ -124,7 +123,6 @@
                         size_hint_x: .45
 
                         Button:
-                            id: bicm 
                             text: '+'
                             background_color: 1, 1, 1, 1
 #                            size_hint_y: None
@@ -134,6 +132,7 @@
                         TextInput:
                             id: timin 
                             multiline: False
+                            font_size: '12sp'
 #                            size_hint_y: None
 #                            height: '30dp'
                             text: '00'
@@ -152,7 +151,6 @@
 
                     Black_12sp_Label:
                         text: 'Minute'
-                        color: (0, 0, 0)
 
 #####################################################################################
             GridLayout: # +++++++++++++++++++++++++++++++++> Layer 2 Child 2
@@ -170,7 +168,7 @@
                         text: 'Repeat: '
                         size_hint_x: .2
 
-                    MDGridLayout:
+                    GridLayout:
                         cols: 7
                         id: repeat
                         size_hint_x: .8
@@ -187,6 +185,7 @@
                     TextInput:
                         id: name
                         multiline: False
+                        font_size: '12sp'
                         size_hint_x: .6
 
                     Black_12sp_Label: 
@@ -212,7 +211,6 @@
                         text: 'browse'
                         font_size: '12sp'
                         size_hint_x: .2
-
 
                 GridLayout:
                     cols: 4
@@ -269,7 +267,7 @@
             size_hint_y: .08
             spacing: (10, 0)
 
-            Label:
+            Black_12sp_Label: 
                 size_hint_x: .25
 
             Button:
@@ -283,7 +281,7 @@
                 text: 'Cancel'
                 on_release: root.dismiss()
 
-            Label:
+            Black_12sp_Label: 
                 size_hint_x: .25
 
 ########################################################################
@@ -308,38 +306,42 @@
             color: "#000000"
             size_hint_y: .10
                       
-        MDGridLayout:
+        GridLayout:
             cols: 1
             id: content
             size_hint_y: 0.8
             padding: 4, 4, 4, 4
 
         GridLayout:
-            cols: 3
+            cols: 1
             size_hint_y: 0.1
             spacing: (15, 0)
             padding: 10, 10, 10, 10
 
-            Button:
-                id: new
-                text: 'Add alarm'
-                size_hint: (1, 1)
-                pos_hint: {"center_x": .5}
-                on_press: Factory.MyPopup().open()
+            GridLayout:
+                cols: 3
+                size_hint_x: 0.5
 
-            Button:
-                id: del
-                text: 'Delete'
-                size_hint: (1, 1)
-                pos_hint: {"center_x": .5}
-                on_press: root.delete_alarm() 
-                                    
-            Button:
-                id: edit
-                text: 'Edit'
-                size_hint: (1, 1)
-                pos_hint: {"center_x": .5}
-                on_press: root.edit_alarm
+                Button:
+                    id: new
+                    text: 'Add alarm'
+                    size_hint: (1, 1)
+                    pos_hint: {"center_x": .5}
+                    on_press: Factory.AlarmPopup().open()
+
+                Button:
+                    id: del
+                    text: 'Delete'
+                    size_hint: (1, 1)
+                    pos_hint: {"center_x": .5}
+                    on_press: root.delete_alarm() 
+                                        
+                Button:
+                    id: edit
+                    text: 'Edit'
+                    size_hint: (1, 1)
+                    pos_hint: {"center_x": .5}
+                    on_press: root.edit_alarm
 
 #########################################################################
 

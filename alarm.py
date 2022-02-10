@@ -1,27 +1,17 @@
-
-#  2
-# sudo update-alternatives --config python3sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10
-
-import logging
-from os import path
-from logging import config
-
-log_file_path = path.join(path.dirname(path.abspath(__file__)), 'logging.conf')
-print(log_file_path)
-config.fileConfig(log_file_path)
-logger = logging.getLogger(__name__)
-
 # ----------------------
 
-#from kivy.app import App
-from kivymd.app import MDApp
+from kivy.app import App
+#from kivymd.app import MDApp
 from kivy.uix.boxlayout  import BoxLayout
 from kivy.uix.popup  import Popup
 from kivy.uix.label  import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
-from alarmdata import AlarmData
+#from alarmdata import AlarmData
 
+#import logging
+#import logconf
+#logger = logging.getLogger(__name__)
 ########################################################################
 
 # creating the root widget used in .kv file
@@ -81,17 +71,23 @@ class AlarmPopup(Popup):
 
     """
     def incre_min(self):
-        self.ids.timin.text = self.__incre_textval(self.ids.timin.text)
+        func = self.__incre(60)
+        self.ids.timin.insert_text(self.__tostr(func(int(self.ids.timin.text)))) 
 
     def decre_min(self):
-        self.ids.timin.text = self.__decre_textval(self.ids.timin.text)
+        func = self.__decre(60)
+        self.ids.timin.insert_text(self.__tostr(func(int(self.ids.timin.text)))) 
 
     def incre_hour(self):
-        self.ids.tihour.text = self.__incre_textval(self.ids.tihour.text, 24)
+        func = self.__incre(24)
+        self.ids.tihour.text = self.__tostr(func(int(self.ids.tihour.text))) 
 
     def decre_hour(self):
-        self.ids.tihour.text = self.__decre_textval(self.ids.tihour.text, 24)
+        func = self.__decre(24)
+        self.ids.tihour.text = self.__tostr(func(int(self.ids.tihour.text))) 
         
+
+
 # --- handle events
 
     def check_press(self, obj):
@@ -122,36 +118,27 @@ class AlarmPopup(Popup):
                 days[d] = 0
         print(dstr)
         data = AlarmData()
-        print(data)
+#        print(data)
         self.dismiss()
 
-
-
 # --- private functions
+
     def __incre(self, x):
         return lambda n : 0 if (n + 1) >= x  else (n + 1)
 
     def __decre(self, x):
         return lambda n : x - 1 if (n - 1) < 0  else (n - 1)
 
-    def __incre_textval(self, vstr, vmax = 60):
-        func = self.__incre(vmax)
-        v = func(int(vstr))
-        return "0" + str(v) if(v < 10) else str(v)
-
-    def __decre_textval(self, vstr, vmax = 60):
-        func = self.__decre(vmax)
-        v = func(int(vstr))
-        return "0" + str(v) if(v < 10) else str(v)
+    def __tostr(self, x):
+        return lambda x : str(x) if x > 10 else "0{}".format(x)
 
 # --- end private functions        
 
-class AlarmApp(MDApp):
+class AlarmApp(App):
     def build(self): 
         return AlarmLayout()
 
 # creating object of Multiple_LayoutApp() class
 if __name__ == '__main__':
-    logger.info("running main")
     myalarm = AlarmApp()
     myalarm.run()
