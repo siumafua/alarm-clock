@@ -1,0 +1,310 @@
+#:import random random
+
+<AlarmScreen>:
+    md_bg_color: app.theme_cls.primary_light
+    repeat: [mon, tue, wed, thu, fri, sat, sun]
+    enable: enable
+    size_hint: .8, .5
+    auto_dismiss: False
+    
+    LightBox:
+        id: alarm_screen
+        orientation: 'vertical'
+        size_hint: (1, 1)
+        spacing: dp(5)
+        padding: dp(10)
+
+#       Title
+        DarkBox:
+            orientation: 'horizontal'
+            size_hint: (.4, .1)
+            MDLabel:
+                text: 'New alarm details'
+                text_color: app.theme_cls.accent_color
+                font_size: sp(16)
+                halign: "center"
+                bold: True
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (.90, .1)
+            pos_hint: {"x": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Name:'
+                font_size: sp(12)
+                halign: "right"
+                size_hint_x: .2
+                text_color: app.theme_cls.text_color
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDTextFieldRect:
+                id: name
+                text: ''
+                font_size: sp(12)
+                multiline: False
+                size_hint_x: .8
+                md_bg_color: app.theme_cls.primary_light
+
+
+#       hour & minute
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (.90, .1)
+            pos_hint: {"x": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Time:'
+                font_size: sp(12)
+                size_hint_x: .2
+                halign: "right"
+                text_color: app.theme_cls.text_color
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDTextFieldRect:
+                id: time
+                text: "{:02}:{:02}".format(int(sl_hour.value), int(sl_min.value))
+                font_size: sp(12)
+                multiline: False
+                size_hint_x: .1
+                max_text_length: 5
+
+            MDGridLayout:
+                cols: 4
+                rows: 1
+                size_hint_x: .7
+                spacing: dp(5)
+
+                Slider:
+                    id: sl_hour
+                    orientation: 'horizontal'
+                    min: 0
+                    max: 23
+                    value: 23
+                    step: 1
+                    pos_hint: {"top": 0.9}
+                    size_hint_x: .42
+
+                MDLabel:
+                    text: '(Hour)'
+                    font_size: sp(10)
+                    size_hint_x: .08
+ #                   md_bg_color: app.theme_cls.primary_light
+                Slider:
+                    id: sl_min
+                    orientation: 'horizontal'
+                    min: 0
+                    max: 59
+                    value: 0
+                    step: 1
+                    pos_hint: {"top": 0.9}
+                    size_hint_x: .42
+
+                MDLabel:
+                    text: '(Min)'
+                    font_size: sp(10)
+                    size_hint_x: .08
+
+#       repeat (days)
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (.90, .1)
+            pos_hint: {"x": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Repeat:'
+                font_size: sp(12)
+                size_hint_x: .2
+                halign: "right"
+                text_color: app.theme_cls.text_color
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDGridLayout:
+                cols: 7
+                rows: 2
+                id: repeat_box
+                size_hint_x: .8
+
+                MDLabel:
+                    text: 'Mon'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Tue'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Wed'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Thu'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Fri'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Sat'
+                    font_size: sp(12)
+                MDLabel:
+                    text: 'Sun'
+                    font_size: sp(12)
+
+                CheckBox:
+                    id: mon
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: tue
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: wed
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: thu
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: fri
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: sat
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+                CheckBox:
+                    id: sun
+                    active: False
+                    pos_hint: {"x": 0}
+                    color: 0, 0, 0, 1
+#       duration
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (0.90, .1)
+            pos_hint: {"y": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Duration (mins):'
+                font_size: sp(12)
+                text_color: app.theme_cls.text_color
+                size_hint_x: .2
+                halign: "right"
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDTextFieldRect:
+                id: dura
+                text: "00"
+                font_size: sp(12)
+                multiline: False
+                size_hint_x: .8
+                max_text_length: 2
+#                md_bg_color: app.theme_cls.primary_dark
+
+
+#       snooze duration 
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (0.90, .1)
+            pos_hint: {"y": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Snooze (mins):'
+                font_size: sp(12)
+                text_color: app.theme_cls.text_color
+                size_hint_x: .2
+                halign: "right"
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDTextFieldRect:
+                id: snooze
+                text: '00'
+                font_size: sp(12)
+                multiline: False
+                size_hint_x: .8
+                max_text_length: 2
+
+#       audio file 
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (0.90, .1)
+            pos_hint: {"y": 0}
+            spacing: dp(5)
+
+            MDLabel:
+                text: 'Audio file:'
+                font_size: sp(12)
+                text_color: app.theme_cls.text_color
+                size_hint_x: .2
+                halign: "right"
+                md_bg_color: app.theme_cls.primary_dark
+
+            MDTextFieldRect:
+                id: audio
+                text: "resources/default.mp3"
+                multiline: False
+                font_size: sp(12) 
+                text_color: app.theme_cls.text_color
+                size_hint_x: .6
+
+            MDRoundFlatButton:
+                text: 'Browse'
+                font_size: sp(12)
+                text_color: app.theme_cls.text_color
+                size_hint_x: .2
+                height: audio.height
+                on_press: root.btn_press(self)
+
+
+#       State
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (0.90, .1)
+            pos_hint: {"y": 0}
+            spacing: dp(5)
+
+#padding: (left, top, right, bottom)
+            MDLabel:
+                text: 'Enable:'
+                font_size: sp(12)
+                text_color: app.theme_cls.text_color
+                size_hint_x: .2
+                halign: "right"
+                md_bg_color: app.theme_cls.primary_dark
+
+            CheckBox:
+                id: enable
+                size_hint_x: .1
+                active: True
+                pos_hint: {"x": 0}
+                color: app.theme_cls.primary_dark
+            MDLabel:
+                size_hint_x: .7
+
+    #   Buttons
+        LightBox:
+            orientation: 'horizontal'
+            size_hint: (.5, .1)
+
+            MDRoundFlatButton:
+                text: 'Save'
+                on_press: root.btn_press(self)
+
+            MDRoundFlatButton:
+                text: 'Reset'
+                on_press: root.btn_press(self)
+
+            MDRoundFlatButton:
+                text: 'Cancel'
+                on_press: root.btn_press(self)
+
+

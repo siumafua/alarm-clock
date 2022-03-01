@@ -1,0 +1,60 @@
+#:import Clock kivy.clock.Clock
+
+
+<AlarmView>:
+    auto_dismiss: False
+    size_hint: .5, .5
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        pos_hint: {"center_x":.5, "center_y": 0.5}
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: .8, .5
+            pos_hint: {"center_x":.5, "center_y": 0.5}
+        
+            MDLabel:
+                size_hint: .3, None
+                height: slider.height
+                text: 'Volume'
+                halign: 'center'
+                font_size: sp(12)
+
+            MDSlider:
+                id: slider
+                size_hint_x: 0.7
+                orientation: 'horizontal'
+                min: 0
+                max: 1
+                value: 1
+                on_touch_up: root.set_volume(slider.value)
+          
+        MDLabel:
+            size_hint_y: .3
+
+        MDBoxLayout:
+            id: buttons
+            orientation: 'horizontal'
+            size_hint_y: .2
+            padding: dp(20)
+            
+            MDRoundFlatButton:
+                id: resume
+                text:'Resume'
+                size_hint_x: 0.3
+                on_press: root.resume_alarm(self)
+                pos_hint: {'center_x':.5, 'center_y':.5}
+
+            MDRoundFlatButton:
+                id: pause
+                text:'Pause'
+                size_hint_x: 0.3
+                on_press: root.pause_alarm(self)
+                pos_hint: {'center_x':.5, 'center_y':.5}
+
+            MDRoundFlatButton:
+                id: stop
+                text:'Stop'
+                size_hint_x: 0.3
+                on_press: root.stop_alarm(self)
+                pos_hint: {'center_x':.5, 'center_y':.5}

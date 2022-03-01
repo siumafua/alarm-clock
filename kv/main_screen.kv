@@ -1,0 +1,174 @@
+####:import Factory kivy.factory.Factory
+####:import Clock kivy.clock.Clock
+  
+<DarkBox@MDBoxLayout>:
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    md_bg_color: app.theme_cls.primary_dark
+
+<LightBox@MDBoxLayout>:
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    md_bg_color: app.theme_cls.primary_light
+
+<TempButton@MDFillRoundFlatButton>
+    pos_hint: {"top":.7}
+    size_hint_x: .25
+    font_size: '12sp' 
+    md_bg_color: app.theme_cls.primary_dark
+
+<LightLabel@MDLabel>
+    font_size: sp(12)
+    halign: 'left'
+    md_bg_color: app.theme_cls.primary_light
+
+<DarkLabel@MDLabel>
+    font_size: sp(12)
+    halign: 'left'
+    md_bg_color: app.theme_cls.primary_light
+
+
+<SelectRow>:
+    tag: ''
+
+<HeaderLabel@MDLabel>:
+    font_style: 'Caption'
+    font_size: sp(12)
+    halign: 'left'
+    bold: True
+
+<Row@MDBoxLayout>:
+    spacing: dp(5)
+    name: ''
+    alarmtime: ''
+    dura: 0
+    snooze: 0
+    days: ''
+    audio: ''
+    enable: 0
+
+    SelectRow:
+        tag: root.name
+        active: False
+        color: 0, 0, 0, 1
+        size_hint_x: .25
+
+    LightLabel:
+        text: root.name
+    LightLabel:
+        text: root.alarmtime
+        size_hint_x: .25
+    LightLabel:
+        text: root.days
+    LightLabel:
+        text: "{:02}".format(root.dura)
+        size_hint_x: .25
+    LightLabel:
+        text: "{:02}".format(root.snooze)
+        size_hint_x: .25
+    LightLabel:
+        text: root.audio
+        font_size: sp(12)
+    LightLabel:
+        text: 'Yes' if root.enable else 'No'
+        size_hint_x: .25
+
+<MainScreen>:
+    md_bg_color: app.theme_cls.bg_dark
+    rv: rv
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: (1, 1)
+        spacing: dp(5)
+    #   top buttons 
+        MDBoxLayout:
+            id: top_buttons
+            orientation: 'horizontal'
+            size_hint: (.7, .1)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+            TempButton:
+                text: 'Sort'
+                on_press: root.btn_press(self)
+            TempButton:
+                text: 'Refresh'
+                on_press: root.btn_press(self)
+            TempButton:
+                text: 'Clear'
+                on_press: root.btn_press(self)
+
+    #   column headers
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: .1
+            md_bg_color: app.theme_cls.primary_light
+
+            MDLabel:    # for record checkboxes
+                size_hint_x: .25
+            DarkLabel:
+                text: 'Name'
+                bold: True
+            DarkLabel:
+                text: 'Time'
+                size_hint_x: .25
+                bold: True
+            DarkLabel:
+                text: 'Repeat'
+                bold: True
+            DarkLabel:
+                text: 'Dura'
+                size_hint_x: .25
+                bold: True
+            DarkLabel:
+                text: 'Snooze'
+                size_hint_x: .25
+                bold: True
+            DarkLabel:
+                text: 'Audio'
+                bold: True
+            DarkLabel:
+                text: 'Active'
+                size_hint_x: .25
+
+    #   alarm data
+        RecycleView:
+            id: rv
+            scroll_type: ['bars', 'content']
+            scroll_wheel_distance: dp(114)
+            bar_width: dp(10)
+            size_hint_y: .7
+
+            viewclass: 'Row'
+            RecycleBoxLayout:
+                default_size: None, dp(56)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+                spacing: dp(2)
+
+    #   bottom buttons
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (.6, .1)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+#            md_bg_color: app.theme_cls.primary_light
+
+            TempButton:
+                text: 'Add'
+                size_hint_x: .2
+                on_press: root.btn_press(self)
+
+            TempButton:
+                text: 'Delete'
+                size_hint_x: .2
+                on_press: root.btn_press(self)
+
+            TempButton:
+                text: 'Edit'
+                size_hint_x: .2
+                on_press: root.btn_press(self)
+
+            TempButton:
+                text: 'Quit'
+                size_hint_x: .2
+                on_press: root.btn_press(self)

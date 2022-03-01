@@ -12,3 +12,19 @@ cur/
 tmp/
 __pycache__/
 *.DS_Store
+.vscode/jsconfig.json
+backup/test.py
+backup/test1.py
+backup/test2.py
+backup/test3.py
+backup/test4.py
+.vscode/main.js
+resources/alarm.db
+backup/test5.py
+backup/mdalarm copy.kv
+.ipynb_checkpoints/Untitled-checkpoint.ipynb
+.ipynb_checkpoints/Untitled1-checkpoint.ipynb
+.ipynb_checkpoints/Untitled2-checkpoint.ipynb
+.ipynb_checkpoints/Untitled3-checkpoint.ipynb
+clock.kv
+clock.py

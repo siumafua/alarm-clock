@@ -12,7 +12,7 @@ log_config = {
         "console":{
             "formatter": "std_out",
             "class": "logging.StreamHandler",
-            "level": "ERROR"
+            "level": "DEBUG" 
         },
         "file":{
             "formatter":"std_out",
