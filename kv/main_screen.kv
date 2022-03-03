@@ -37,6 +37,7 @@
 
 <Row@MDBoxLayout>:
     spacing: dp(5)
+    rid: ''
     name: ''
     alarmtime: ''
     dura: 0
@@ -46,11 +47,10 @@
     enable: 0
 
     SelectRow:
-        tag: root.name
+        tag: root.rid
         active: False
         color: 0, 0, 0, 1
         size_hint_x: .25
-
     LightLabel:
         text: root.name
     LightLabel:
@@ -102,7 +102,10 @@
             size_hint_y: .1
             md_bg_color: app.theme_cls.primary_light
 
-            MDLabel:    # for record checkboxes
+            SelectRow:
+                tag: all
+                active: False
+                color: 0, 0, 0, 1
                 size_hint_x: .25
             DarkLabel:
                 text: 'Name'

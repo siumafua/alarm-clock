@@ -4,7 +4,7 @@
     md_bg_color: app.theme_cls.primary_light
     repeat: [mon, tue, wed, thu, fri, sat, sun]
     enable: enable
-    size_hint: .8, .5
+    size_hint: .8, .6
     auto_dismiss: False
     
     LightBox:
@@ -24,7 +24,22 @@
                 font_size: sp(16)
                 halign: "center"
                 bold: True
+#       id                
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint: (.90, .1)
+            pos_hint: {"x": 0}
+            spacing: dp(5)
+            MDLabel:
+                id: id
+                text: 'ID: '
+                font_size: sp(12)
+                halign: "right"
+                size_hint_x: .2
+                text_color: app.theme_cls.text_color
+                md_bg_color: app.theme_cls.primary_dark
 
+#       name
         MDBoxLayout:
             orientation: 'horizontal'
             size_hint: (.90, .1)
@@ -44,9 +59,8 @@
                 text: ''
                 font_size: sp(12)
                 multiline: False
-                size_hint_x: .8
+                size_hint_x: .7
                 md_bg_color: app.theme_cls.primary_light
-
 
 #       hour & minute
         MDBoxLayout:

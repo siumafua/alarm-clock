@@ -1,5 +1,27 @@
 #:import Clock kivy.clock.Clock
+#:import BaseSnackbar kivymd.uix.snackbar.BaseSnackbar
 
+<CustomSnackbar>
+    md_bg_color: app.theme_cls.primary_dark
+    snackbar_x: dp(10)
+    snackbar_y: dp(10)
+
+    MDIconButton:
+        pos_hint: {'center_y': .5}
+        icon: root.icon
+        opposite_colors: True
+
+    MDLabel:
+        id: text_bar
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: root.text
+        font_size: root.font_size
+        theme_text_color: 'Custom'
+        text_color: get_color_from_hex('ffffff')
+        shorten: True
+        shorten_from: 'right'
+        pos_hint: {'center_y': .5}
 
 <AlarmView>:
     auto_dismiss: False

@@ -28,7 +28,7 @@ class AlarmOp:
 
     def __get_alarms(self) -> None:
         db = AlarmData()
-        alarms_data = db.get_active_alarms()
+        alarms_data = db.active_alarms
         db.close_conn()
 
         list_holder = list()
