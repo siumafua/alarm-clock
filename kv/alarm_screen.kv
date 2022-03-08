@@ -2,7 +2,7 @@
 
 <AlarmScreen>:
     md_bg_color: app.theme_cls.primary_light
-    repeat: [mon, tue, wed, thu, fri, sat, sun]
+#    repeat: [mon, tue, wed, thu, fri, sat, sun]
     enable: enable
     size_hint: .8, .6
     auto_dismiss: False
@@ -30,14 +30,21 @@
             size_hint: (.90, .1)
             pos_hint: {"x": 0}
             spacing: dp(5)
+
             MDLabel:
-                id: id
-                text: 'ID: '
+                text: 'Alarm ID: '
                 font_size: sp(12)
                 halign: "right"
                 size_hint_x: .2
                 text_color: app.theme_cls.text_color
                 md_bg_color: app.theme_cls.primary_dark
+
+            MDLabel:
+                id: rid
+                font_size: sp(12)
+                size_hint_x: .8
+                text_color: app.theme_cls.text_color
+                md_bg_color: app.theme_cls.primary_light
 
 #       name
         MDBoxLayout:
@@ -59,8 +66,15 @@
                 text: ''
                 font_size: sp(12)
                 multiline: False
-                size_hint_x: .7
+                size_hint_x: .5
                 md_bg_color: app.theme_cls.primary_light
+                hint_text: "Alarm descritive name"
+                helper_text: 'Decriptive alarm name, e.g. "Work Alarm"'
+                helper_text_mode: "persistent"  # on_focus
+
+            MDLabel:
+                size_hint_x: .3
+
 
 #       hour & minute
         MDBoxLayout:
@@ -70,7 +84,7 @@
             spacing: dp(5)
 
             MDLabel:
-                text: 'Time:'
+                text: 'Alarm Time:'
                 font_size: sp(12)
                 size_hint_x: .2
                 halign: "right"
@@ -129,7 +143,7 @@
             spacing: dp(5)
 
             MDLabel:
-                text: 'Repeat:'
+                text: 'Repeats on:'
                 font_size: sp(12)
                 size_hint_x: .2
                 halign: "right"
@@ -137,68 +151,11 @@
                 md_bg_color: app.theme_cls.primary_dark
 
             MDGridLayout:
-                cols: 7
-                rows: 2
                 id: repeat_box
+                cols: 8
+                rows: 2
                 size_hint_x: .8
 
-                MDLabel:
-                    text: 'Mon'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Tue'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Wed'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Thu'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Fri'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Sat'
-                    font_size: sp(12)
-                MDLabel:
-                    text: 'Sun'
-                    font_size: sp(12)
-
-                CheckBox:
-                    id: mon
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: tue
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: wed
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: thu
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: fri
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: sat
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
-                CheckBox:
-                    id: sun
-                    active: False
-                    pos_hint: {"x": 0}
-                    color: 0, 0, 0, 1
 #       duration
         MDBoxLayout:
             orientation: 'horizontal'
@@ -219,9 +176,11 @@
                 text: "00"
                 font_size: sp(12)
                 multiline: False
-                size_hint_x: .8
+                size_hint_x: .05
                 max_text_length: 2
-#                md_bg_color: app.theme_cls.primary_dark
+
+            MDLabel:
+                size_hint_x: .75
 
 
 #       snooze duration 
@@ -244,8 +203,11 @@
                 text: '00'
                 font_size: sp(12)
                 multiline: False
-                size_hint_x: .8
+                size_hint_x: .05
                 max_text_length: 2
+
+            MDLabel:
+                size_hint_x: .75
 
 #       audio file 
         MDBoxLayout:

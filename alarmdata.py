@@ -103,11 +103,11 @@ class AlarmData:
         """
         
         n = len(values)
-        sql = "DELETE FROM Alarms WHERE {} = {} ".format(field, values[0])
+        sql = "DELETE FROM Alarms WHERE {} = '{}' ".format(field, values[0])
         for x in range(1, n - 1):
             sql = sql + "OR '{}' ".format(values[x])
         sql = sql + "OR '{}'".format(values[n-1])
-        
+        print("sql :" + sql)
         try:
             self.cursor.execute(sql)
             self.conn.commit()

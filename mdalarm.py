@@ -7,17 +7,14 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.screenmanager import ScreenManager
 from kivy.core.audio import SoundLoader, Sound
 from kivy.lang.builder import Builder
-from alarmdata import AlarmData
 from kivy.clock import Clock
 from kivymd.uix.button import MDFillRoundFlatButton, MDFlatButton
 from random import random
 from time import strftime
-from kivymd.uix.dialog import MDDialog
 from datetime import datetime
 from alarmop import AlarmOp
 from kivymd.uix.filemanager import MDFileManager
-from kivymd.uix.snackbar import BaseSnackbar
-from kivy.core.window import Window
+from kivymd.uix.label import MDLabel
 
 from kivy.properties import (
     ObjectProperty,
@@ -28,57 +25,22 @@ from kivy.properties import (
     StringProperty,
 )
 
-class CustomSnackbar(BaseSnackbar):
-    text = StringProperty(None)
-    icon = StringProperty(None)
-    font_size = NumericProperty("15sp")
-
-class AlarmSnackbar:
-    snackbar = ObjectProperty(None)
-    def show(self, msg: str, icon: str = 'information'):
-        self.snackbar = CustomSnackbar(
-            text=msg,
-            icon=icon,
-        )
-#        buttons=[MDFlatButton(text="Ok", text_color=(1, 1, 1, 1))]
-        self.snackbar.size_hint_x = (
-            Window.width - (self.snackbar.snackbar_x * 2)
-        ) / Window.width
-        self.snackbar.open()
-        
-    def dismiss(self):
-        self.snackbar.dismiss()
-        
-    def yesno(self, msg: str, callback, icon: str = "alert"):
-            
-        snackbar = CustomSnackbar(
-            text=msg,
-            icon="alert",
-            duration=10,
-            auto_dismiss = False,
-            buttons=[
-                MDFlatButton(
-                text="Yes",
-                on_release=callback,
-                text_color=(1, 1, 1, 1)),
-                MDFlatButton(
-                text="No",
-                text_color=(1, 1, 1, 1)),                     
-            ])
-#        buttons=[MDFlatButton(text="Ok", text_color=(1, 1, 1, 1))]
-        snackbar.size_hint_x = (
-            Window.width - (snackbar.snackbar_x * 2)
-        ) / Window.width
-        snackbar.open()
-        
-
+from alarmdata import AlarmData
+from alarmsnackbar import AlarmSnackbar
+from newalarm import NewAlarm
+from alarmview import AlarmView
 
 class SelectRow(CheckBox):
-    
-    tag = Property('')
+   
+    tag = StringProperty('')
     selected = list()
 
-    def on_press(self):
+    def on_release(self) -> None:
+        if self.tag == 'all':
+            print("all here")
+            for cb in app.main_screen.ids.rv.ids:
+                print(cb)
+            return
         if self.active:
             SelectRow.selected.append(self.tag)
         elif self.tag in SelectRow.selected:
@@ -103,65 +65,74 @@ class MainScreen(MDScreen):
         db.close_conn()
         self.rv.data = []
         self.rv.data = data
-
-    def snack_button_release(self):
-        print("you snack on me")
-        
+       
     def btn_press(self, btn):
         self.tag = btn.text.lower()
         (Clock.create_trigger(self.btn_action, release_ref=False))()
+        self.tag = ''
 
     def btn_action(self, offset):
         match self.tag:
             case 'sort':
-                self.rv.data = sorted(self.rv.data, key=lambda k: k['name'])
+                self.rv.data = sorted(self.rv.data, key=lambda k: k['rid'])
             case 'refresh':
                 self.populate()
             case 'clear':
                 self.rv.data = []
-                AlarmSnackbar().yesno("hellow there", self.snack_button_release)
             case 'add':
-                win = AlarmScreen()
+                win = NewAlarm(app=app)
                 win.ids.sl_hour.value = 7
                 win.ids.sl_min.value = 30
-                win.ids.name.text = "alarm{}".format(str(random())[2:6])
+                win.ids.rid.text = "alarm{}".format(str(random())[2:6])
+                win.ids.name.text = ""
                 for cb in win.repeat:
-                    cb.active = False \
-                    if app.config.get('Alarms', 'days') == 'None'\
-                          else True
+                    cb.active = False if \
+                        app.config.get('Alarms', 'days') == 'None'\
+                           else True
                 win.ids.dura.text = "{:02}".format(int(app.config.get('Alarms', 'dura')))
                 win.ids.snooze.text = "{:02}".format(int(app.config.get('Alarms', 'snooze')))
                 win.ids.audio.text = app.config.get('Alarms', 'audio')
                 win.ids.enable.active = bool(app.config.get('Alarms', 'enable'))
                 win.open()
-
             case 'delete':
                 if len(SelectRow.selected) < 1:
-                    self.open_alert_dialog(
-                        title="Operational error!",
-                        text='You did not select any record(s). Please try again.',
-                    )
+                    AlarmSnackbar.info(msg='ERROR: Please select select record(s) to delete.',
+                                       icon="alert-circle")
                 else:
-                    self.open_yesno_dialog(
-                        title="Do you want to continute?",
-                        text="This will permanently remove these record(s) from the database.",
-                        callback=self.delete_confirmation,
-                    )
-
+                    def del_yes():
+                        db = AlarmData()
+                        print(SelectRow.selected)
+                        if db.del_records('rid', SelectRow.selected):
+                            AlarmSnackbar.info(msg="Record(s) with key: {} were deleted \
+                                    successfully".format(SelectRow.selected))
+                        else:
+                            AlarmSnackbar.info(msg="ERROR: Deleting records failed: {}. \
+                                    Please check log or contact admin for help.".format(SelectRow.selected),
+                                       icon="alert-circle")
+                        db.close_conn()
+                        
+                    def del_no():
+                        sb.dismiss()
+            
+                    sb = AlarmSnackbar.alert(
+                        msg="Do you want to continute?",
+                        ybtn=('del_y', del_yes),
+                        nbtn=('del_n', del_no))
+                    self.selected = []
             case 'edit':
                 if len(SelectRow.selected) < 1:
-                    AlarmSnackbar.show(msg="Operational error! You did not select any record to edit.")
+                    AlarmSnackbar.info(msg="ERROR: Please select a record to edit.",
+                                       icon="alert-circle")
                 elif len(SelectRow.selected) > 1:
-                    self.open_alert_dialog(
-                        title="Operational error!",
-                        text='Can only edit one record at a time. Please try again.',
-                    )
+                    AlarmSnackbar.info(msg='ERROR: You can only edit one record at a time.',
+                                       icon="alert-circle")
                 else:
                     db = AlarmData()
-                    recs = (db.get_alarm_by_field('name', SelectRow.selected[0]))[0]
+                    recs = (db.get_alarm_by_field('rid', SelectRow.selected[0]))[0]
                     db.close_conn()
 
-                    win = AlarmScreen()
+                    win = NewAlarm(app=app)
+                    win.ids.rid.text = recs['rid']
                     win.ids.name.text = recs['name']
                     hr, mn = recs['alarmtime'].split(':')
                     win.ids.sl_hour.value = int(hr)
@@ -175,285 +146,12 @@ class MainScreen(MDScreen):
                     win.ids.audio.text = recs['audio']
                     win.ids.enable.active = recs['enable']
                     win.open()
-
+                self.selected = []
             case 'quit':
+                AlarmSnackbar.info("App shutting down...")
                 app.stop()
             case _:
-                print("Invalid button's tag: {}".format(self.tag))
-
-    def open_alert_dialog(self, **kw):
-        if 'title' not in kw.keys() or \
-                'text' not in kw.keys():
-            return
-
-        self.dialog = MDDialog(
-            title=kw['title'],
-            text=kw['text'],
-            buttons=[
-                MDFillRoundFlatButton(
-                    text="Ok",
-                    text_color=app.theme_cls.primary_light,
-                    on_release=self.close_alert_dialog,
-                ),
-            ],
-        )
-        self.dialog.open()
-
-    def close_alert_dialog(self, btn):
-        self.dialog.dismiss()
-
-    def open_yesno_dialog(self, **kw):
-        if 'title' or 'callback' \
-                or 'text' not in kw.keys():
-            return
-
-        self.dialog = MDDialog(
-            auto_dismiss=False,
-            type="confirmation",
-            title=kw['title'],
-            text=kw['text'],
-            buttons=[
-                MDFillRoundFlatButton(
-                    text="Yes",
-                    text_color=app.theme_cls.primary_light,
-                    on_release=kw['callback'],
-                ),
-                MDFillRoundFlatButton(
-                    text="No",
-                    text_color=app.theme_cls.primary_light,
-                    on_release=kw['callback'],
-                ),
-            ],
-        )
-        self.dialog.open()
-
-    def delete_confirmation(self, btn):
-        if btn.text.lower() == 'yes':
-            db = AlarmData()
-            if db.del_records('name', SelectRow.selected):
-                self.open_alert_dialog(
-                    title="Information",
-                    text="Record(s) with key: {} were deleted \
-                        successfully".format(SelectRow.selected),
-                )
-            else:
-                self.open_alert_dialog(
-                    title="Error Message",
-                    text="Error deleting records: {}. \
-                        Please check log then try again.".format(SelectRow.selected),
-                )
-        self.dialog.dismiss()
-
-
-class RepeatCheckBox(CheckBox):
-    pass
-
-
-class AlarmScreen(ModalView):
-
-    repeat = ListProperty(None)
-    enable = ObjectProperty(None)
-    manager_open = BooleanProperty(False)
-    tag = Property('')
-    days = ListProperty([
-        'Mon', 'Tue', 'Wed',
-        'Thu', "Fri", 'Sat',
-        'Sun'
-    ])
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.audio = ''
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_manager,
-            select_path=self.select_path,
-            size_hint=(.9, .8),
-            ext=['.mp3', '.wav', 'mp4']
-        )
-
-    def btn_press(self, btn):
-        self.tag = btn.text.lower()
-        (Clock.create_trigger(self.btn_action, release_ref=False))()
-
-    def btn_action(self, offset):
-        match self.tag:
-            case 'save':  # add or update
-                select_days = ''
-                for x in range(0, len(self.repeat)):
-                    if self.repeat[x].active:
-                        select_days = "{},{}".format(select_days, self.days[x])
-                select_days = select_days[1:]
-
-                rec = {
-                    'date': datetime.now().strftime("%d-%m-%Y"),
-                    'rid' : self.ids.rid.text,
-                    'name': self.ids.name.text,
-                    'alarmtime': self.ids.time.text,
-                    'dura': int(self.ids.dura.text),
-                    'snooze': int(self.ids.snooze.text),
-                    'days': select_days,
-                    'audio': self.ids.audio.text,
-                    'enable': 1 if self.enable.active else 0,
-                }
-
-                db = AlarmData()
-                res = db.get_alarm_by_field('rid', self.ids.rid.text)
-                if len(res) >= 1:  # key existed, Update
-                    db.update_record('rid', rec)
-                else:  # insert
-                    if db.insert_record(rec):
-                        app.main_screen.open_alert_dialog(
-                            title="Information!",
-                            text="Record \"{}\" were added successfully".format(rec),
-                        )
-                    else:
-                        app.main_screen.open_alert_dialog(
-                            title="Error Message!!",
-                            text="Error saving record \"{}\". Please check log \
-                                then try again".format(rec),
-                        )
-                db.close_conn()
-                self.dismiss()
-                app.main_screen.populate()  # reload alarm data from database
-                app.alarmop.refresh(0)  # reload monitored alarms
-
-            case 'reset':
-                self.ids.rid.text = "alarm{}".format(str(random())[2:6])
-                self.ids.name.text = ""
-                self.ids.sl_hour.value = 7
-                self.ids.sl_min.value = 30
-                if app.config.get('Alarms', 'days') == 'None':
-                    for d in self.repeat:
-                        d.active = False
-                else:
-                    for d in self.repeat:
-                        d.active = True
-                self.ids.dura.text = "{:02}".format(int(app.config.get('Alarms', 'dura')))
-                self.ids.snooze.text = "{:02}".format(int(app.config.get('Alarms', 'snooze')))
-                self.ids.audio.text = app.config.get('Alarms', 'audio')
-                self.ids.enable.active = bool(app.config.get('Alarms', 'enable'))
-
-            case 'cancel':
-                self.dismiss()
-            case 'browse':
-                self.file_manager_open()
-            case _:
-                Snackbar(text="Invalid button's tag: {}".format(self.tag)).open()
-
-    def file_manager_open(self):
-        self.file_manager.show('.')  # output manager to the screen
-        self.manager_open = True
-
-    def select_path(self, path):
-        self.exit_manager()
-        self.audio = path
-        app.config.set('Alarms', 'audio', path)
-
-    def exit_manager(self, *args):
-        self.manager_open = False
-        self.file_manager.close()
-
-
-class AlarmView(ModalView):
-
-    alarm_audio = ObjectProperty()
-    pause = BooleanProperty(False)
-    nloop = NumericProperty(0)
-
-    def __init__(self, **kwargs):
-        
-        # process then remove our own arguments
-        # before calling super otherwise it will raise an error
-        # since parent class will not recognizes it.
-        
-        if 'audio' and 'dura' and 'snooze' in kwargs.keys():
-            self.audio = kwargs['audio']
-            self.dura = kwargs['dura']
-            self.snooze = kwargs['snooze']
-            del kwargs['audio']
-            del kwargs['dura']
-            del kwargs['snooze']
-            self.auto_dismiss = False
-        super().__init__(**kwargs)
-
-    def open(self, *largs, **kwargs):
-        super().open(*largs, **kwargs)
-        
-        # let the open process complete then 
-        # start the alarm    
-        self.start_alarm()
-
-    def start_alarm(self):
-        
-        self.ids.pause.disabled = False
-        self.ids.resume.disabled = True
-        self.alarm_audio = SoundLoader.load(self.audio)
-
-        # we take care of looping so turn this off.
-        # we need to control the number of loops etc
-        self.alarm_audio.loop = False
-        
-        # just to be sure as state don't change when the sound
-        # reach the end...
-        if self.alarm_audio.state != 'stop':
-            self.alarm_audio.stop()
-            
-        # number of loops = duration in secs / length of audio in secs
-        # duration = 5 mins = 300 secs and audio length = 20 secs  
-        # self.nloop = 300 / 20 = 15 
-        
-        self.nloop = self.dura * 60 / self.alarm_audio.length
-        
-        # setup callback for when the alarm audio reach the end
-        # we need to restart "nloop" times. 
-        
-        self.alarm_audio.bind(on_stop=self.stopping)
-        
-        # play the alarm sound
-        self.alarm_audio.play()
-
-    def set_volume(self, val):
-        self.alarm_audio.volume = val
-
-   
-    def stopping(self, obj):
-        """stopping - Called when alarm stop playing.
-
-        Keep replaying the alarm audio unless the user
-        paused it (clicking pause) or we reach the number 
-        of loops i.e. have played the audio for "duration" secs 
-            
-        Args:
-            obj : ignored
-        """
-    
-        if not self.pause and self.nloop > 0:
-            if self.alarm_audio.state != 'stop':
-                self.alarm_audio.stop()
-            self.alarm_audio.play()
-            self.nloop -= 1
-
-    def stop_alarm(self, btn):
-
-        if self.alarm_audio.state != 'stop':
-            self.alarm_audio.stop()
-        self.alarm_audio.unload()
-        app.alarm_start = False
-        self.dismiss()
-
-    def pause_alarm(self, btn):
-
-        self.ids.pause.disabled = True
-        self.ids.resume.disabled = False
-        self.pause = True
-        self.alarm_audio.stop()
-
-    def resume_alarm(self, btn):
-
-        self.ids.pause.disabled = False
-        self.ids.resume.disabled = True
-        self.pause = False
-        self.stopping(None)
+                AlarmSnackbar.info("Invalid button's tag: {}".format(self.tag))
 
 
 class MDAlarmApp(MDApp):

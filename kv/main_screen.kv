@@ -103,7 +103,7 @@
             md_bg_color: app.theme_cls.primary_light
 
             SelectRow:
-                tag: all
+                tag: 'all'
                 active: False
                 color: 0, 0, 0, 1
                 size_hint_x: .25
@@ -142,6 +142,7 @@
 
             viewclass: 'Row'
             RecycleBoxLayout:
+                id: viewbox
                 default_size: None, dp(56)
                 default_size_hint: 1, None
                 size_hint_y: None

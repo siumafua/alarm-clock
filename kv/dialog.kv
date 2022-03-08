@@ -1,10 +1,11 @@
 #:import Clock kivy.clock.Clock
 #:import BaseSnackbar kivymd.uix.snackbar.BaseSnackbar
 
-<CustomSnackbar>
-    md_bg_color: app.theme_cls.primary_dark
+<InfoSnackbar>
+    md_bg_color: app.theme_cls.primary_light
     snackbar_x: dp(10)
     snackbar_y: dp(10)
+    font_size: sp(12)
 
     MDIconButton:
         pos_hint: {'center_y': .5}
@@ -18,10 +19,50 @@
         text: root.text
         font_size: root.font_size
         theme_text_color: 'Custom'
-        text_color: get_color_from_hex('ffffff')
+        text_color: get_color_from_hex('030303')
         shorten: True
         shorten_from: 'right'
         pos_hint: {'center_y': .5}
+
+<YesnoSnackbar>
+    md_bg_color: app.theme_cls.primary_light
+    snackbar_x: dp(10)
+    snackbar_y: dp(10)
+    font_size: sp(12)
+    
+    yes: yesbtn
+    no: nobtn
+    
+    MDIconButton:
+        pos_hint: {'center_y': .5}
+        icon: root.icon
+        opposite_colors: True
+
+    MDLabel:
+        id: text_bar
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: root.text
+        font_size: root.font_size
+        theme_text_color: 'Custom'
+        text_color: get_color_from_hex('030303')
+        shorten: True
+        shorten_from: 'right'
+        pos_hint: {'center_y': .5}
+
+    MDFlatButton: 
+        id: yesbtn
+        text: 'Yes'
+        on_release: root.press_yes(self)
+        text_color: .3, .3, .3, 1
+        tag: ''
+
+    MDFlatButton: 
+        id: nobtn
+        text: 'No'
+        on_release: root.press_no(self)
+        text_color: .3, .3, .3, 1
+        tag: ''
 
 <AlarmView>:
     auto_dismiss: False
